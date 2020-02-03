@@ -1,0 +1,815 @@
+---
+title: "APM466"
+output: pdf_document
+---
+
+```{r}
+bonddata = read.csv("/Users/yuguo/Desktop/466/APM466H1.csv")
+date = as.Date(bonddata$maturity_date, "%m/%d/%Y")
+dirty_price <- function(today, annual_coupon_rate, clean_price, maturity_date) {
+  new_date = toString(maturity_date)
+    if (!substr(new_date, 6, 7) == "06") {
+a = as.Date("2019-09-01")
+} else {
+a = as.Date("2019-12-01")
+}
+ 
+  result <- as.numeric(as.data.frame(today - a))/365 * annual_coupon_rate * 100 + clean_price
+  return(result)
+}
+
+
+yield_one <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       (coupon + 100)/((1+(x/2))^(2*(1/6))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+  
+yield_two <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + (coupon+100)/((1+(x/2))^(2*(2/3))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_three <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + (coupon+100)/((1+(x/2))^(2*(7/6))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_four <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + coupon/((1+(x/2))^(2*(7/6))) + 
+       (coupon+100)/((1+(x/2))^(2*(5/3)))- dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_five <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + coupon/((1+(x/2))^(2*(7/6))) + 
+       coupon/((1+(x/2))^(2*(5/3))) + (coupon+100)/((1+(x/2))^(2*(13/6))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+
+yield_six <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(5/12))) + coupon/((1+(x/2))^(2*(11/12))) + coupon/((1+(x/2))^(2*(17/12))) + 
+       coupon/((1+(x/2))^(2*(23/12))) + (coupon+100)/((1+(x/2))^(2*(29/12))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_seven <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + coupon/((1+(x/2))^(2*(7/6))) + 
+       coupon/((1+(x/2))^(2*(5/3))) + coupon/((1+(x/2))^(2*(13/6))) + coupon/((1+(x/2))^(2*(8/3))) + (coupon+100)/((1+(x/2))^(2*(19/6))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+
+yield_eight <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(5/12))) + coupon/((1+(x/2))^(2*(11/12))) + coupon/((1+(x/2))^(2*(17/12))) + 
+       coupon/((1+(x/2))^(2*(23/12))) + coupon/((1+(x/2))^(2*(29/12))) + coupon/((1+(x/2))^(2*(35/12))) + (coupon+100)/((1+(x/2))^(2*(41/12))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_nine <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + coupon/((1+(x/2))^(2*(7/6))) + 
+       coupon/((1+(x/2))^(2*(5/3))) + coupon/((1+(x/2))^(2*(13/6))) + coupon/((1+(x/2))^(2*(8/3))) + coupon/((1+(x/2))^(2*(19/6))) + coupon/((1+(x/2))^(2*(11/3))) + (coupon+100)/((1+(x/2))^(2*(25/6))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_ten <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + coupon/((1+(x/2))^(2*(7/6))) + 
+       coupon/((1+(x/2))^(2*(5/3))) + coupon/((1+(x/2))^(2*(13/6))) + coupon/((1+(x/2))^(2*(8/3))) + coupon/((1+(x/2))^(2*(19/6))) + coupon/((1+(x/2))^(2*(11/3))) + coupon/((1+(x/2))^(2*(25/6))) + (coupon+100)/((1+(x/2))^(2*(14/3))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+yield_eleven <- function(annual_coupon_rate, dirtyprice) {
+   coupon = 100 * annual_coupon_rate/2
+   f = function(x){
+       coupon/((1+(x/2))^(2*(1/6))) + coupon/((1+(x/2))^(2*(2/3))) + coupon/((1+(x/2))^(2*(7/6))) + 
+       coupon/((1+(x/2))^(2*(5/3))) + coupon/((1+(x/2))^(2*(13/6))) + coupon/((1+(x/2))^(2*(8/3))) + coupon/((1+(x/2))^(2*(19/6))) + coupon/((1+(x/2))^(2*(11/3))) + coupon/((1+(x/2))^(2*(25/6))) + coupon/((1+(x/2))^(2*(14/3))) + (100+coupon)/((1+(x/2))^(2*(31/6))) - dirtyprice
+   }
+   result = uniroot(f, lower = 0, upper = 0.5)
+   return(result[1])
+}
+
+
+
+yield <- function(today, annual_coupon_rate, clean_price, maturity_date){
+  if (toString(maturity_date) == "2020-03-01") { 
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_one(annual_coupon_rate, dirty)
+    } else if (toString(maturity_date) == "2020-09-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_two(annual_coupon_rate, dirty)
+    } else if  (toString(maturity_date) == "2021-03-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_three(annual_coupon_rate, dirty)
+    } else if(toString(maturity_date) == "2021-09-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_four(annual_coupon_rate, dirty)
+    } else if (toString(maturity_date) == "2022-03-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_five(annual_coupon_rate, dirty)
+    } else if  (toString(maturity_date) == "2022-06-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_six(annual_coupon_rate, dirty)
+    } else if(toString(maturity_date) == "2023-03-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_seven(annual_coupon_rate, dirty)
+    } else if (toString(maturity_date) == "2023-06-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_eight(annual_coupon_rate, dirty)
+    } else if  (toString(maturity_date) == "2024-03-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_nine(annual_coupon_rate, dirty)
+    } else if(toString(maturity_date) == "2024-09-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_ten(annual_coupon_rate, dirty)      
+    } else if(toString(maturity_date) == "2025-03-01") {
+    dirty = dirty_price(today, annual_coupon_rate, clean_price, maturity_date)
+    result = yield_eleven(annual_coupon_rate, dirty)      
+    }
+  return(result)
+}
+
+Y = c("2020-01-02", "2020-01-03", "2020-01-06", "2020-01-07","2020-01-08","2020-01-09","2020-01-10","2020-01-13","2020-01-14", "2020-01-15")
+ytm1 = c()
+a = 1
+for (i in Y) {
+  clean = c(99.85, 99.86, 99.86, 99.86, 99.86, 99.86, 99.86, 99.86, 99.86, 99.86)
+  add = yield(as.Date(i), 0.015, clean[a], as.Date("2020-03-01"))
+  a = a+1
+  ytm1 = c(ytm1, add)
+}
+
+ytm2 = c()
+b = 1
+for (i in Y) {
+  clean = c(99.26, 99.28, 99.28, 99.27, 99.28, 99.28, 99.28, 99.27, 99.28, 99.3)
+  add = yield(as.Date(i), 0.0075, clean[b], as.Date("2020-09-01"))
+  b = b+1
+  ytm2 = c(ytm2, add)
+}
+
+ytm3 = c()
+c = 1
+for (i in Y) {
+  clean = c(98.89, 98.93, 98.95, 98.94, 98.92, 98.92, 98.88, 98.9, 98.9, 98.93)
+  add = yield(as.Date(i), 0.0075, clean[c], as.Date("2021-03-01"))
+  c = c+1
+  ytm3 = c(ytm3, add)
+}
+
+ytm4 = c()
+d = 1
+for (i in Y) {
+  clean = c(98.41, 98.45, 98.49, 98.46,	98.46, 98.43,	98.43, 98.38, 98.41, 98.42)
+  add = yield(as.Date(i), 0.0075, clean[d], as.Date("2021-09-01"))
+  d = d+1
+  ytm4 = c(ytm4, add)
+}
+
+
+ytm5 = c()
+e = 1
+for (i in Y) {
+  clean = c(97.57, 97.63, 97.66, 97.65,	97.64, 97.6, 97.61,	97.57, 97.58,	97.61)
+  add = yield(as.Date(i), 0.005, clean[e], as.Date("2022-03-01"))
+  e = e+1
+  ytm5 = c(ytm5, add)
+}
+
+ytm6 = c()
+f = 1
+for (i in Y) {
+  clean = c(102.53, 102.59, 102.62, 102.59, 102.58, 102.52, 102.52, 102.46, 102.47, 102.51)
+  add = yield(as.Date(i), 0.0275, clean[f], as.Date("2022-06-01"))
+  f = f+1
+  ytm6 = c(ytm6, add)
+}
+
+ytm7 = c()
+g = 1
+for (i in Y) {
+  clean = c(100.31, 100.42, 100.48, 100.45, 100.44, 100.35, 100.31, 100.27, 100.31, 100.38)
+  add = yield(as.Date(i), 0.0175, clean[g], as.Date("2023-03-01"))
+  g = g+1
+  ytm7 = c(ytm7, add)
+}
+
+ytm8 = c()
+h = 1
+for (i in Y) {
+  clean = c(99.48, 99.59, 99.65, 99.61, 99.62, 99.54, 99.53, 99.44, 99.49, 99.56)
+  add = yield(as.Date(i), 0.015, clean[h], as.Date("2023-06-01"))
+  h = h+1
+  ytm8 = c(ytm8, add)
+}
+
+ytm9 = c()
+j = 1
+for (i in Y) {
+  clean = c(102.52, 102.65, 102.75, 102.58, 102.68, 102.53, 102.47, 102.46, 102.54, 102.64)
+  add = yield(as.Date(i), 0.0225, clean[j], as.Date("2024-03-01"))
+  j = j+1
+  ytm9 = c(ytm9, add)
+}
+
+ytm9 = c()
+j = 1
+for (i in Y) {
+  clean = c(102.52, 102.65, 102.75, 102.58, 102.68, 102.53, 102.47, 102.46, 102.54, 102.64)
+  add = yield(as.Date(i), 0.0225, clean[j], as.Date("2024-03-01"))
+  j = j+1
+  ytm9 = c(ytm9, add)
+}
+
+ytm10 = c()
+k = 1
+for (i in Y) {
+  clean = c(98.72, 98.95, 99.29, 99.11, 99.25, 98.99, 99.03, 99.06, 98.99, 99.1)
+  add = yield(as.Date(i), 0.015, clean[k], as.Date("2024-09-01"))
+  k = k+1
+  ytm10 = c(ytm10, add)
+}
+
+ytm11 = c()
+l = 1
+for (i in Y) {
+  clean = c(98.24, 98.43, 98.58, 98.48, 98.48, 98.3, 98.25, 98.24, 98.34, 98.47)
+  add = yield(as.Date(i), 0.0125, clean[l], as.Date("2025-03-01"))
+  l = l+1
+  ytm11 = c(ytm11, add)
+}
+
+
+comb = data.frame(ytm1, ytm2, ytm3, ytm4, ytm5, ytm6, ytm7, ytm8, ytm9, ytm10, ytm11)
+yield_1 = c(comb[1], comb[11], comb[21], comb[31],comb[41], comb[51], comb[61], comb[71],comb[81], comb[91], comb[101])
+yield_2 = c(comb[2], comb[12], comb[22], comb[32],comb[42], comb[52], comb[62], comb[72],comb[82], comb[92], comb[102])
+yield_3 = c(comb[3], comb[13], comb[23], comb[33],comb[43], comb[53], comb[63], comb[73],comb[83], comb[93], comb[103])
+yield_4 = c(comb[4], comb[14], comb[24], comb[34],comb[44], comb[54], comb[64], comb[74],comb[84], comb[94], comb[104])
+yield_5 = c(comb[5], comb[15], comb[25], comb[35],comb[45], comb[55], comb[65], comb[75],comb[85], comb[95], comb[105])
+yield_6 = c(comb[6], comb[16], comb[26], comb[36],comb[46], comb[56], comb[66], comb[76],comb[86], comb[96], comb[106])
+yield_7 = c(comb[7], comb[17], comb[27], comb[37],comb[47], comb[57], comb[67], comb[77],comb[87], comb[97], comb[107])
+yield_8 = c(comb[8], comb[18], comb[28], comb[38],comb[48], comb[58], comb[68], comb[78],comb[88], comb[98], comb[108])
+yield_9 = c(comb[9], comb[19], comb[29], comb[39],comb[49], comb[59], comb[69], comb[79],comb[89], comb[99], comb[109])
+yield_10 = c(comb[10], comb[20], comb[30], comb[40],comb[50], comb[60], comb[70], comb[80],comb[90], comb[100], comb[110])
+
+
+xaxis = c(1/6, 2/3, 7/6, 5/3, 13/6, 29/12, 19/6, 41/12, 25/6, 14/3, 31/6)
+plot(x = xaxis, y = yield_1, xlab = "Maturity date", ylab = "YTM", type = "l", lwd = 2,
+     main = "YTM curve", col = "black")
+lines(x = xaxis, y = yield_2, type = "l", lwd = 2, col = "green" )
+lines(x = xaxis, y = yield_3, type = "l", lwd = 2, col = "blue" )
+lines(x = xaxis, y = yield_4, type = "l", lwd = 2, col = "red" )
+lines(x = xaxis, y = yield_5, type = "l", lwd = 2, col = "purple" )
+lines(x = xaxis, y = yield_6, type = "l", lwd = 2, col = "gray" )
+lines(x = xaxis, y = yield_7, type = "l", lwd = 2, col = "orange" )
+lines(x = xaxis, y = yield_8, type = "l", lwd = 2, col = "pink" )
+lines(x = xaxis, y = yield_9, type = "l", lwd = 2, col = "yellow" )
+lines(x = xaxis, y = yield_10, type = "l", lwd = 2, col = "brown" )
+legend(3, 0.024, legend=c("Jan.2", "Jan.3", "Jan.6", "Jan.7", "Jan.8", "Jan.9", "Jan.10", "Jan.13", "Jan.14", "Jan.15"), col=c("black", "green", "blue", "red", "purple", "gray", "orange", "pink", "yellow", "brown"), lty=1:1, cex=0.5)
+
+# C is already halfed in this code
+# the first bond, there are totally 11 bonds, until s11t
+spot1 <- function(today, clean){
+  dirtyprice = dirty_price(today, 0.015, clean, as.Date("2020-03-01"))
+  c = 1.5/2
+  f = function(x){
+    (c+100) * exp(-x/6) - dirtyprice
+  }
+  result = uniroot(f, lower = 0, upper = 0.5)
+  return(result[1])
+}
+
+s1t = as.numeric(c(spot1(as.Date("2020-01-02"), 99.85), spot1(as.Date("2020-01-03"), 99.86), spot1(as.Date("2020-01-06"), 99.86), spot1(as.Date("2020-01-07"), 99.86), spot1(as.Date("2020-01-08"), 99.86), spot1(as.Date("2020-01-09"), 99.86), spot1(as.Date("2020-01-10"), 99.86), spot1(as.Date("2020-01-13"), 99.86), spot1(as.Date("2020-01-14"), 99.86), spot1(as.Date("2020-01-15"), 99.86)))
+
+YY = as.Date(Y)
+s2t = c()
+bb = 1 #for loop can be in anything as long as the length is 10, I just used s1t for the following.
+for (i in s1t) {
+  clean2 = c(99.26, 99.28, 99.28, 99.27, 99.28, 99.28, 99.28, 99.27, 99.28, 99.3)
+  c = 100 * 0.0075 / 2
+  f = function(x){
+    c * exp(-1*s1t[bb]/6) + (c+100)*exp(-x*(2/3)) - dirty_price(YY[bb], 0.0075, clean2[bb], as.Date("2020-09-01"))
+  }
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  bb = bb+1
+  s2t = c(s2t, add)
+}
+s2t = as.numeric(s2t)
+
+
+s3t = c()
+cc = 1
+for (i in s1t) {
+  clean3 = c(98.89, 98.93, 98.95, 98.94, 98.92, 98.92, 98.88, 98.9, 98.9, 98.93)
+  c = 100 * 0.0075 / 2
+  f = function(x){
+    c * exp(-s1t[cc]/6) + c*exp(-s2t[cc]*(2/3)) + (100+c)*exp(-x*(7/6)) - dirty_price(YY[cc], 0.0075, clean3[cc], as.Date("2021-03-01"))
+  }
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  cc = cc+1
+  s3t = c(s3t, add)
+}
+s3t = as.numeric(s3t)
+
+s4t = c()
+dd = 1
+for (i in s1t) {
+  clean4 = c(98.41, 98.45, 98.49, 98.46, 98.46, 98.43, 98.43, 98.38, 98.41, 98.42)
+  c = 100 * 0.0075 / 2
+  f = function(x){
+    c * exp(-s1t[dd]/6) + c*exp(-s2t[dd]*(2/3)) + c*exp(-s3t[dd]*(7/6)) + (100+c)*exp(-x*(5/3)) - dirty_price(YY[dd], 0.0075, clean4[dd], as.Date("2021-09-01"))
+  }
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  dd = dd+1
+  s4t = c(s4t, add)
+}
+s4t = as.numeric(s4t)
+
+
+s5t = c()
+ee = 1
+for (i in s1t) {
+  clean5 = c(97.57, 97.63, 97.66, 97.65, 97.64, 97.6, 97.61, 97.57, 97.58, 97.61)
+  c = 100 * 0.005 / 2
+  f = function(x){
+    c * exp(-s1t[ee]/6) + c*exp(-s2t[ee]*(2/3)) + c*exp(-s3t[ee]*(7/6)) + c*exp(-s4t[ee]*(5/3)) +     (100+c)*exp(-x*(13/6)) - dirty_price(YY[ee], 0.005, clean5[ee], as.Date("2022-03-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  ee = ee+1
+  s5t = c(s5t, add)
+}
+s5t = as.numeric(s5t)
+
+#s6t is special we need to calculate r(5/12), r(11/12), r(17/12), r(23/12)
+s61 = (s1t + s2t)/2
+s62 = (s2t + s3t)/2
+s63 = (s3t + s4t)/2
+s64 = (s4t + s5t)/2
+
+s6t = c()
+ff = 1
+for (i in s1t) {
+  clean6 = c(102.53, 102.59, 102.62, 102.59, 102.58, 102.52, 102.52, 102.46, 102.47, 102.51)
+  c = 100 * 0.0275 / 2
+  f = function(x){
+    c * exp(-s61[ff]*(5/12)) + c*exp(-s62[ff]*(11/12)) + c*exp(-s63[ff]*(17/12)) + c*exp(-s64[ff]*(23/12)) +     (100+c)*exp(-x*(29/12)) - dirty_price(YY[ff], 0.0275, clean6[ff], as.Date("2022-06-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  ff = ff+1
+  s6t = c(s6t, add)
+}
+s6t = as.numeric(s6t)
+
+#bond7
+s76 = 2*s6t - s5t
+s7t = c()
+gg = 1
+for (i in s1t) {
+  clean7 = c(100.31, 100.42, 100.48, 100.45, 100.44, 100.35, 100.31, 100.27, 100.31, 100.38)
+  c = 100 * 0.0175 / 2
+  f = function(x){
+    c * exp(-s1t[gg]*(1/6)) + c*exp(-s2t[gg]*(2/3)) + c*exp(-s3t[gg]*(7/6)) + c*exp(-s4t[gg]*(5/3)) +     +c*exp(-s5t[gg]*(13/6)) + c*exp(-s76[gg]*(8/3)) + (100+c)*exp(-x*(19/6)) - dirty_price(YY[gg], 0.0175, clean7[gg], as.Date("2023-03-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  gg = gg+1
+  s7t = c(s7t, add)
+}
+s7t = as.numeric(s7t)
+
+
+#bond 8 
+s86 = (s7t + s76)/2
+s8t = c()
+hh = 1
+for (i in s1t) {
+  clean8 = c(99.48, 99.59, 99.65, 99.61, 99.62, 99.54, 99.53, 99.44, 99.49, 99.56)
+  c = 100 * 0.015 / 2
+  f = function(x){
+    c * exp(-s61[hh]*(5/12)) + c*exp(-s62[hh]*(11/12)) + c*exp(-s63[hh]*(17/12)) + c*exp(-s64[hh]*(23/12)) +     +c*exp(-s6t[hh]*(29/12)) + c*exp(-s86[hh]*(35/12)) + (100+c)*exp(-x*(41/12)) - dirty_price(YY[hh], 0.015, clean8[hh], as.Date("2023-06-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  hh = hh+1
+  s8t = c(s8t, add)
+}
+s8t = as.numeric(s8t)
+
+
+#bond9
+
+s98 = 2*s8t-s7t
+s9t = c()
+ii = 1
+for (i in s1t) {
+  clean9 = c(102.52, 102.65, 102.75, 102.58, 102.68, 102.53, 102.47, 102.46, 102.54, 102.64)
+  c = 100 * 0.0225 / 2
+  f = function(x){
+    c * exp(-s1t[ii]*(1/6)) + c*exp(-s2t[ii]*(2/3)) + c*exp(-s3t[ii]*(7/6)) + c*exp(-s4t[ii]*(5/3)) +     +c*exp(-s5t[ii]*(13/6)) + c*exp(-s76[ii]*(8/3)) + c*exp(-s7t[ii]*(19/6)) + c*exp(-s98[ii]*(11/3)) + (100+c)*exp(-x*(25/6)) - dirty_price(YY[ii], 0.0225, clean9[ii], as.Date("2024-03-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  ii = ii+1
+  s9t = c(s9t, add)
+}
+s9t = as.numeric(s9t)
+
+#bond10
+s10t = c()
+jj = 1
+for (i in s1t) {
+  clean10 = c(98.72, 98.95, 99.29, 99.11, 99.25, 98.99, 99.03, 99.06, 98.99, 99.1)
+  c = 100 * 0.015 / 2
+  f = function(x){
+    c * exp(-s1t[jj]*(1/6)) + c*exp(-s2t[jj]*(2/3)) + c*exp(-s3t[jj]*(7/6)) + c*exp(-s4t[jj]*(5/3)) +     +c*exp(-s5t[jj]*(13/6)) + c*exp(-s76[jj]*(8/3)) + c*exp(-s7t[jj]*(19/6)) + c*exp(-s98[jj]*(11/3)) + c*exp(-s9t[jj]*(25/6)) + (100+c)*exp(-x*(14/3)) - dirty_price(YY[jj], 0.015, clean10[jj], as.Date("2024-09-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  jj = jj+1
+  s10t = c(s10t, add)
+}
+s10t = as.numeric(s10t)
+
+#bond11
+s11t = c()
+kk = 1
+for (i in s1t) {
+  clean11 = c(98.24, 98.43, 98.58, 98.48, 98.48, 98.3, 98.25, 98.24, 98.34, 98.47)
+  c = 100 * 0.0125 / 2
+  f = function(x){
+    c * exp(-s1t[kk]*(1/6)) + c*exp(-s2t[kk]*(2/3)) + c*exp(-s3t[kk]*(7/6)) + c*exp(-s4t[kk]*(5/3)) +     +c*exp(-s5t[kk]*(13/6)) + c*exp(-s76[kk]*(8/3)) + c*exp(-s7t[kk]*(19/6)) + c*exp(-s98[kk]*(11/3)) + c*exp(-s9t[kk]*(25/6)) + c*exp(-s10t[kk]*(14/3)) + (100+c)*exp(-x*(31/6)) - dirty_price(YY[kk], 0.0125, clean11[kk], as.Date("2025-03-01"))
+  } 
+  result = uniroot(f, lower = 0, upper = 0.5)
+  add = result[1]
+  kk = kk+1
+  s11t = c(s11t, add)
+}
+s11t = as.numeric(s11t)
+
+
+newcomb = c(s1t, s2t, s3t, s4t, s5t, s6t, s7t, s8t, s9t, s10t, s11t)
+spot_1 = c(newcomb[1], newcomb[11], newcomb[21], newcomb[31], newcomb[41], newcomb[51], newcomb[61], newcomb[71], newcomb[81], newcomb[91], newcomb[101])
+spot_2 = c(newcomb[2], newcomb[12], newcomb[22], newcomb[32], newcomb[42], newcomb[52], newcomb[62], newcomb[72], newcomb[82], newcomb[92], newcomb[102])
+spot_3 = c(newcomb[3], newcomb[13], newcomb[23], newcomb[33], newcomb[43], newcomb[53], newcomb[63], newcomb[73], newcomb[83], newcomb[93], newcomb[103])
+spot_4 = c(newcomb[4], newcomb[14], newcomb[24], newcomb[34], newcomb[44], newcomb[54], newcomb[64], newcomb[74], newcomb[84], newcomb[94], newcomb[104])
+spot_5 = c(newcomb[5], newcomb[15], newcomb[25], newcomb[35], newcomb[45], newcomb[55], newcomb[65], newcomb[75], newcomb[85], newcomb[95], newcomb[105])
+spot_6 = c(newcomb[6], newcomb[16], newcomb[26], newcomb[36], newcomb[46], newcomb[56], newcomb[66], newcomb[76], newcomb[86], newcomb[96], newcomb[106])
+spot_7 = c(newcomb[7], newcomb[17], newcomb[27], newcomb[37], newcomb[47], newcomb[57], newcomb[67], newcomb[77], newcomb[87], newcomb[97], newcomb[107])
+spot_8 = c(newcomb[8], newcomb[18], newcomb[28], newcomb[38], newcomb[48], newcomb[58], newcomb[68], newcomb[78], newcomb[88], newcomb[98], newcomb[108])
+spot_9 = c(newcomb[9], newcomb[19], newcomb[29], newcomb[39], newcomb[49], newcomb[59], newcomb[69], newcomb[79], newcomb[89], newcomb[99], newcomb[109])
+spot_10 = c(newcomb[10], newcomb[20], newcomb[30], newcomb[40], newcomb[50], newcomb[60], newcomb[70],newcomb[80], newcomb[90], newcomb[100], newcomb[110])
+
+xaxis = c(1/6, 2/3, 7/6, 5/3, 13/6, 29/12, 19/6, 41/12, 25/6, 14/3, 31/6)
+plot(x = xaxis, y = spot_1, xlab = "Maturity date", ylab = "spot rate", type = "l", lwd = 2,
+     main = "spot curve", col = "black")
+lines(x = xaxis, y = spot_2, type = "l", lwd = 2, col = "green" )
+lines(x = xaxis, y = spot_3, type = "l", lwd = 2, col = "blue" )
+lines(x = xaxis, y = spot_4, type = "l", lwd = 2, col = "red" )
+lines(x = xaxis, y = spot_5, type = "l", lwd = 2, col = "purple" )
+lines(x = xaxis, y = spot_6, type = "l", lwd = 2, col = "gray" )
+lines(x = xaxis, y = spot_7, type = "l", lwd = 2, col = "orange" )
+lines(x = xaxis, y = spot_8, type = "l", lwd = 2, col = "pink" )
+lines(x = xaxis, y = spot_9, type = "l", lwd = 2, col = "yellow" )
+lines(x = xaxis, y = spot_10, type = "l", lwd = 2, col = "brown" )
+legend(3, 0.024, legend=c("Jan.2", "Jan.3", "Jan.6", "Jan.7", "Jan.8", "Jan.9", "Jan.10", "Jan.13", "Jan.14", "Jan.15"), col=c("black", "green", "blue", "red", "purple", "gray", "orange", "pink", "yellow", "brown"), lty=1:1, cex=0.5)
+
+#Q4C
+#50 functions with func11,12,13,14,15,21,22,23,24,25`````91,92,93,94,95,101,102,103,104,105(tenthday)
+#for 1-2
+func11 <- function(x) ((spot_1[3] - spot_1[2])/0.5) * (x-2/3) + spot_1[2]
+func12 <- function(x) ((spot_1[5] - spot_1[4])/0.5) * (x-5/3) + spot_1[4]
+func13 <- function(x) ((spot_1[7] - spot_1[6])/0.75) * (x-29/12) + spot_1[6]
+func14 <- function(x) ((spot_1[9] - spot_1[8])/0.75) * (x-41/12) + spot_1[8]
+func15 <- function(x) ((spot_1[11] - spot_1[10])/0.5) * (x-14/3) + spot_1[10]
+jan1_2 = c(func11(1), func12(2), func13(3), func14(4), func15(5))
+
+#for 1-3
+func21 <- function(x) ((spot_2[3] - spot_2[2])/0.5) * (x-2/3) + spot_2[2]
+func22 <- function(x) ((spot_2[5] - spot_2[4])/0.5) * (x-5/3) + spot_2[4]
+func23 <- function(x) ((spot_2[7] - spot_2[6])/0.75) * (x-29/12) + spot_2[6]
+func24 <- function(x) ((spot_2[9] - spot_2[8])/0.75) * (x-41/12) + spot_2[8]
+func25 <- function(x) ((spot_2[11] - spot_2[10])/0.5) * (x-14/3) + spot_2[10]
+jan1_3 = c(func21(1), func22(2), func23(3), func24(4), func25(5))
+
+#for 1-6
+func31 <- function(x) ((spot_3[3] - spot_3[2])/0.5) * (x-2/3) + spot_3[2]
+func32 <- function(x) ((spot_3[5] - spot_3[4])/0.5) * (x-5/3) + spot_3[4]
+func33 <- function(x) ((spot_3[7] - spot_3[6])/0.75) * (x-29/12) + spot_3[6]
+func34 <- function(x) ((spot_3[9] - spot_3[8])/0.75) * (x-41/12) + spot_3[8]
+func35 <- function(x) ((spot_3[11] - spot_3[10])/0.5) * (x-14/3) + spot_3[10]
+jan1_6 = c(func31(1), func32(2), func33(3), func34(4), func35(5))
+
+#for 1-7
+func41 <- function(x) ((spot_4[3] - spot_4[2])/0.5) * (x-2/3) + spot_4[2]
+func42 <- function(x) ((spot_4[5] - spot_4[4])/0.5) * (x-5/3) + spot_4[4]
+func43 <- function(x) ((spot_4[7] - spot_4[6])/0.75) * (x-29/12) + spot_4[6]
+func44 <- function(x) ((spot_4[9] - spot_4[8])/0.75) * (x-41/12) + spot_4[8]
+func45 <- function(x) ((spot_4[11] - spot_4[10])/0.5) * (x-14/3) + spot_4[10]
+jan1_7 = c(func41(1), func42(2), func43(3), func44(4), func45(5))
+
+#for 1-8
+func51 <- function(x) ((spot_5[3] - spot_5[2])/0.5) * (x-2/3) + spot_5[2]
+func52 <- function(x) ((spot_5[5] - spot_5[4])/0.5) * (x-5/3) + spot_5[4]
+func53 <- function(x) ((spot_5[7] - spot_5[6])/0.75) * (x-29/12) + spot_5[6]
+func54 <- function(x) ((spot_5[9] - spot_5[8])/0.75) * (x-41/12) + spot_5[8]
+func55 <- function(x) ((spot_5[11] - spot_5[10])/0.5) * (x-14/3) + spot_5[10]
+jan1_8 = c(func51(1), func52(2), func53(3), func54(4), func55(5))
+
+#for 1-9
+func61 <- function(x) ((spot_6[3] - spot_6[2])/0.5) * (x-2/3) + spot_6[2]
+func62 <- function(x) ((spot_6[5] - spot_6[4])/0.5) * (x-5/3) + spot_6[4]
+func63 <- function(x) ((spot_6[7] - spot_6[6])/0.75) * (x-29/12) + spot_6[6]
+func64 <- function(x) ((spot_6[9] - spot_6[8])/0.75) * (x-41/12) + spot_6[8]
+func65 <- function(x) ((spot_6[11] - spot_6[10])/0.5) * (x-14/3) + spot_6[10]
+jan1_9 = c(func61(1), func62(2), func63(3), func64(4), func65(5))
+
+#for 1-10
+func71 <- function(x) ((spot_7[3] - spot_7[2])/0.5) * (x-2/3) + spot_7[2]
+func72 <- function(x) ((spot_7[5] - spot_7[4])/0.5) * (x-5/3) + spot_7[4]
+func73 <- function(x) ((spot_7[7] - spot_7[6])/0.75) * (x-29/12) + spot_7[6]
+func74 <- function(x) ((spot_7[9] - spot_7[8])/0.75) * (x-41/12) + spot_7[8]
+func75 <- function(x) ((spot_7[11] - spot_7[10])/0.5) * (x-14/3) + spot_7[10]
+jan1_10 = c(func71(1), func72(2), func73(3), func74(4), func75(5))
+
+#for 1-13
+func81 <- function(x) ((spot_8[3] - spot_8[2])/0.5) * (x-2/3) + spot_8[2]
+func82 <- function(x) ((spot_8[5] - spot_8[4])/0.5) * (x-5/3) + spot_8[4]
+func83 <- function(x) ((spot_8[7] - spot_8[6])/0.75) * (x-29/12) + spot_8[6]
+func84 <- function(x) ((spot_8[9] - spot_8[8])/0.75) * (x-41/12) + spot_8[8]
+func85 <- function(x) ((spot_8[11] - spot_8[10])/0.5) * (x-14/3) + spot_8[10]
+jan1_13 = c(func81(1), func82(2), func83(3), func84(4), func85(5))
+
+#for 1-14
+func91 <- function(x) ((spot_9[3] - spot_9[2])/0.5) * (x-2/3) + spot_9[2]
+func92 <- function(x) ((spot_9[5] - spot_9[4])/0.5) * (x-5/3) + spot_9[4]
+func93 <- function(x) ((spot_9[7] - spot_9[6])/0.75) * (x-29/12) + spot_9[6]
+func94 <- function(x) ((spot_9[9] - spot_9[8])/0.75) * (x-41/12) + spot_9[8]
+func95 <- function(x) ((spot_9[11] - spot_9[10])/0.5) * (x-14/3) + spot_9[10]
+jan1_14 = c(func91(1), func92(2), func93(3), func94(4), func95(5))
+
+#for 1-15
+func101 <- function(x) ((spot_10[3] - spot_10[2])/0.5) * (x-2/3) + spot_10[2]
+func102 <- function(x) ((spot_10[5] - spot_10[4])/0.5) * (x-5/3) + spot_10[4]
+func103 <- function(x) ((spot_10[7] - spot_10[6])/0.75) * (x-29/12) + spot_10[6]
+func104 <- function(x) ((spot_10[9] - spot_10[8])/0.75) * (x-41/12) + spot_10[8]
+func105 <- function(x) ((spot_10[11] - spot_10[10])/0.5) * (x-14/3) + spot_10[10]
+jan1_15 = c(func101(1), func102(2), func103(3), func104(4), func105(5))
+
+#now we start forward
+#for 1-2
+a1_1 = ((1+jan1_2[2])^2 / (1+jan1_2[1])) - 1 
+a1_2 = ((1+jan1_2[3])^3 / (1+jan1_2[1]))^(1/2) - 1
+a1_3 = ((1+jan1_2[4])^4 / (1+jan1_2[1]))^(1/3) - 1
+a1_4 = ((1+jan1_2[5])^5 / (1+jan1_2[1]))^(1/4) - 1
+
+#for 1-3
+b1_1 = ((1+jan1_3[2])^2 / (1+jan1_3[1])) - 1 
+b1_2 = ((1+jan1_3[3])^3 / (1+jan1_3[1]))^(1/2) - 1
+b1_3 = ((1+jan1_3[4])^4 / (1+jan1_3[1]))^(1/3) - 1
+b1_4 = ((1+jan1_3[5])^5 / (1+jan1_3[1]))^(1/4) - 1
+
+#for 1-6
+c1_1 = ((1+jan1_6[2])^2 / (1+jan1_6[1])) - 1 
+c1_2 = ((1+jan1_6[3])^3 / (1+jan1_6[1]))^(1/2) - 1
+c1_3 = ((1+jan1_6[4])^4 / (1+jan1_6[1]))^(1/3) - 1
+c1_4 = ((1+jan1_6[5])^5 / (1+jan1_6[1]))^(1/4) - 1
+
+#for 1-7
+d1_1 = ((1+jan1_7[2])^2 / (1+jan1_7[1])) - 1 
+d1_2 = ((1+jan1_7[3])^3 / (1+jan1_7[1]))^(1/2) - 1
+d1_3 = ((1+jan1_7[4])^4 / (1+jan1_7[1]))^(1/3) - 1
+d1_4 = ((1+jan1_7[5])^5 / (1+jan1_7[1]))^(1/4) - 1
+
+#for 1-8
+e1_1 = ((1+jan1_8[2])^2 / (1+jan1_8[1])) - 1 
+e1_2 = ((1+jan1_8[3])^3 / (1+jan1_8[1]))^(1/2) - 1
+e1_3 = ((1+jan1_8[4])^4 / (1+jan1_8[1]))^(1/3) - 1
+e1_4 = ((1+jan1_8[5])^5 / (1+jan1_8[1]))^(1/4) - 1
+
+#for 1-9
+f1_1 = ((1+jan1_9[2])^2 / (1+jan1_9[1])) - 1 
+f1_2 = ((1+jan1_9[3])^3 / (1+jan1_9[1]))^(1/2) - 1
+f1_3 = ((1+jan1_9[4])^4 / (1+jan1_9[1]))^(1/3) - 1
+f1_4 = ((1+jan1_9[5])^5 / (1+jan1_9[1]))^(1/4) - 1
+
+#for 1-10
+g1_1 = ((1+jan1_10[2])^2 / (1+jan1_10[1])) - 1 
+g1_2 = ((1+jan1_10[3])^3 / (1+jan1_10[1]))^(1/2) - 1
+g1_3 = ((1+jan1_10[4])^4 / (1+jan1_10[1]))^(1/3) - 1
+g1_4 = ((1+jan1_10[5])^5 / (1+jan1_10[1]))^(1/4) - 1
+
+#for 1-13
+h1_1 = ((1+jan1_13[2])^2 / (1+jan1_13[1])) - 1 
+h1_2 = ((1+jan1_13[3])^3 / (1+jan1_13[1]))^(1/2) - 1
+h1_3 = ((1+jan1_13[4])^4 / (1+jan1_13[1]))^(1/3) - 1
+h1_4 = ((1+jan1_13[5])^5 / (1+jan1_13[1]))^(1/4) - 1
+
+#for 1-14
+i1_1 = ((1+jan1_14[2])^2 / (1+jan1_14[1])) - 1 
+i1_2 = ((1+jan1_14[3])^3 / (1+jan1_14[1]))^(1/2) - 1
+i1_3 = ((1+jan1_14[4])^4 / (1+jan1_14[1]))^(1/3) - 1
+i1_4 = ((1+jan1_14[5])^5 / (1+jan1_14[1]))^(1/4) - 1
+
+#for 1-15
+j1_1 = ((1+jan1_15[2])^2 / (1+jan1_15[1])) - 1 
+j1_2 = ((1+jan1_15[3])^3 / (1+jan1_15[1]))^(1/2) - 1
+j1_3 = ((1+jan1_15[4])^4 / (1+jan1_15[1]))^(1/3) - 1
+j1_4 = ((1+jan1_15[5])^5 / (1+jan1_15[1]))^(1/4) - 1
+
+cy1 = c(a1_1, a1_2, a1_3, a1_4)
+cy2 = c(b1_1, b1_2, b1_3, b1_4)
+cy3 = c(c1_1, c1_2, c1_3, c1_4)
+cy4 = c(d1_1, d1_2, d1_3, d1_4)
+cy5 = c(e1_1, e1_2, e1_3, e1_4)
+cy6 = c(f1_1, f1_2, f1_3, f1_4)
+cy7 = c(g1_1, g1_2, g1_3, g1_4)
+cy8 = c(h1_1, h1_2, h1_3, h1_4)
+cy9 = c(i1_1, i1_2, i1_3, i1_4)
+cy10 = c(j1_1, j1_2, j1_3, j1_4)
+
+
+newxaxis = c(1, 2, 3, 4)
+plot(x = newxaxis, y = cy1, xlab = "time", ylab = "forward rate", type = "l", lwd = 2,
+     main = "forward rate curve", col = "black", ylim = c(0.0150, 0.0164), xaxt = "n")
+axis(1,at=c(1,2,3,4),labels=c("1yr-1yr", "1yr-2yr", "1yr-3yr", "1yr-4yr"))
+lines(x = newxaxis, y = cy2, type = "l", lwd = 2, col = "green" )
+lines(x = newxaxis, y = cy3, type = "l", lwd = 2, col = "blue" )
+lines(x = newxaxis, y = cy4, type = "l", lwd = 2, col = "red" )
+lines(x = newxaxis, y = cy5, type = "l", lwd = 2, col = "purple" )
+lines(x = newxaxis, y = cy6, type = "l", lwd = 2, col = "gray" )
+lines(x = newxaxis, y = cy7, type = "l", lwd = 2, col = "orange" )
+lines(x = newxaxis, y = cy8, type = "l", lwd = 2, col = "pink" )
+lines(x = newxaxis, y = cy9, type = "l", lwd = 2, col = "yellow" )
+lines(x = newxaxis, y = cy10, type = "l", lwd = 2, col = "brown" )
+legend(1, 0.0164, legend=c("Jan.2", "Jan.3", "Jan.6", "Jan.7", "Jan.8", "Jan.9", "Jan.10", "Jan.13", "Jan.14", "Jan.15"), col=c("black", "green", "blue", "red", "purple", "gray", "orange", "pink", "yellow", "brown"), lty=1:1, cex=0.4)
+
+
+y_1 = as.numeric(yield_1)
+y_2 = as.numeric(yield_2)
+y_3 = as.numeric(yield_3)
+y_4 = as.numeric(yield_4)
+y_5 = as.numeric(yield_5)
+y_6 = as.numeric(yield_6)
+y_7 = as.numeric(yield_7)
+y_8 = as.numeric(yield_8)
+y_9 = as.numeric(yield_9)
+y_10 = as.numeric(yield_10)
+
+#5
+#for 1-2
+newfunc11 <- function(x) ((y_1[3] - y_1[2])/0.5) * (x-2/3) + y_1[2]
+newfunc12 <- function(x) ((y_1[5] - y_1[4])/0.5) * (x-5/3) + y_1[4]
+newfunc13 <- function(x) ((y_1[7] - y_1[6])/0.75) * (x-29/12) + y_1[6]
+newfunc14 <- function(x) ((y_1[9] - y_1[8])/0.75) * (x-41/12) + y_1[8]
+newfunc15 <- function(x) ((y_1[11] - y_1[10])/0.5) * (x-14/3) + y_1[10]
+newjan1_2 = c(newfunc11(1), newfunc12(2), newfunc13(3), newfunc14(4), newfunc15(5))
+#for 1-3
+newfunc21 <- function(x) ((y_2[3] - y_2[2])/0.5) * (x-2/3) + y_2[2]
+newfunc22 <- function(x) ((y_2[5] - y_2[4])/0.5) * (x-5/3) + y_2[4]
+newfunc23 <- function(x) ((y_2[7] - y_2[6])/0.75) * (x-29/12) + y_2[6]
+newfunc24 <- function(x) ((y_2[9] - y_2[8])/0.75) * (x-41/12) + y_2[8]
+newfunc25 <- function(x) ((y_2[11] - y_2[10])/0.5) * (x-14/3) + y_2[10]
+newjan1_3 = c(newfunc21(1), newfunc22(2), newfunc23(3), newfunc24(4), newfunc25(5))
+
+#for 1-6
+newfunc31 <- function(x) ((y_3[3] - y_3[2])/0.5) * (x-2/3) + y_3[2]
+newfunc32 <- function(x) ((y_3[5] - y_3[4])/0.5) * (x-5/3) + y_3[4]
+newfunc33 <- function(x) ((y_3[7] - y_3[6])/0.75) * (x-29/12) + y_3[6]
+newfunc34 <- function(x) ((y_3[9] - y_3[8])/0.75) * (x-41/12) + y_3[8]
+newfunc35 <- function(x) ((y_3[11] - y_3[10])/0.5) * (x-14/3) + y_3[10]
+newjan1_6 = c(newfunc31(1), newfunc32(2), newfunc33(3), newfunc34(4), newfunc35(5))
+
+#for 1-7
+newfunc41 <- function(x) ((y_4[3] - y_4[2])/0.5) * (x-2/3) + y_4[2]
+newfunc42 <- function(x) ((y_4[5] - y_4[4])/0.5) * (x-5/3) + y_4[4]
+newfunc43 <- function(x) ((y_4[7] - y_4[6])/0.75) * (x-29/12) + y_4[6]
+newfunc44 <- function(x) ((y_4[9] - y_4[8])/0.75) * (x-41/12) + y_4[8]
+newfunc45 <- function(x) ((y_4[11] - y_4[10])/0.5) * (x-14/3) + y_4[10]
+newjan1_7 = c(newfunc41(1), newfunc42(2), newfunc43(3), newfunc44(4), newfunc45(5))
+
+#for 1-8
+newfunc51 <- function(x) ((y_5[3] - y_5[2])/0.5) * (x-2/3) + y_5[2]
+newfunc52 <- function(x) ((y_5[5] - y_5[4])/0.5) * (x-5/3) + y_5[4]
+newfunc53 <- function(x) ((y_5[7] - y_5[6])/0.75) * (x-29/12) + y_5[6]
+newfunc54 <- function(x) ((y_5[9] - y_5[8])/0.75) * (x-41/12) + y_5[8]
+newfunc55 <- function(x) ((y_5[11] - y_5[10])/0.5) * (x-14/3) + y_5[10]
+newjan1_8 = c(newfunc51(1), newfunc52(2), newfunc53(3), newfunc54(4), newfunc55(5))
+
+#for 1-9
+newfunc61 <- function(x) ((y_6[3] - y_6[2])/0.5) * (x-2/3) + y_6[2]
+newfunc62 <- function(x) ((y_6[5] - y_6[4])/0.5) * (x-5/3) + y_6[4]
+newfunc63 <- function(x) ((y_6[7] - y_6[6])/0.75) * (x-29/12) + y_6[6]
+newfunc64 <- function(x) ((y_6[9] - y_6[8])/0.75) * (x-41/12) + y_6[8]
+newfunc65 <- function(x) ((y_6[11] - y_6[10])/0.5) * (x-14/3) + y_6[10]
+newjan1_9 = c(newfunc61(1), newfunc62(2), newfunc63(3), newfunc64(4), newfunc65(5))
+
+#for 1-10
+newfunc71 <- function(x) ((y_7[3] - y_7[2])/0.5) * (x-2/3) + y_7[2]
+newfunc72 <- function(x) ((y_7[5] - y_7[4])/0.5) * (x-5/3) + y_7[4]
+newfunc73 <- function(x) ((y_7[7] - y_7[6])/0.75) * (x-29/12) + y_7[6]
+newfunc74 <- function(x) ((y_7[9] - y_7[8])/0.75) * (x-41/12) + y_7[8]
+newfunc75 <- function(x) ((y_7[11] - y_7[10])/0.5) * (x-14/3) + y_7[10]
+newjan1_10 = c(newfunc71(1), newfunc72(2), newfunc73(3), newfunc74(4), newfunc75(5))
+
+#for 1-13
+newfunc81 <- function(x) ((y_8[3] - y_8[2])/0.5) * (x-2/3) + y_8[2]
+newfunc82 <- function(x) ((y_8[5] - y_8[4])/0.5) * (x-5/3) + y_8[4]
+newfunc83 <- function(x) ((y_8[7] - y_8[6])/0.75) * (x-29/12) + y_8[6]
+newfunc84 <- function(x) ((y_8[9] - y_8[8])/0.75) * (x-41/12) + y_8[8]
+newfunc85 <- function(x) ((y_8[11] - y_8[10])/0.5) * (x-14/3) + y_8[10]
+newjan1_13 = c(newfunc81(1), newfunc82(2), newfunc83(3), newfunc84(4), newfunc85(5))
+#for 1-14
+newfunc91 <- function(x) ((y_9[3] - y_9[2])/0.5) * (x-2/3) + y_9[2]
+newfunc92 <- function(x) ((y_9[5] - y_9[4])/0.5) * (x-5/3) + y_9[4]
+newfunc93 <- function(x) ((y_9[7] - y_9[6])/0.75) * (x-29/12) + y_9[6]
+newfunc94 <- function(x) ((y_9[9] - y_9[8])/0.75) * (x-41/12) + y_9[8]
+newfunc95 <- function(x) ((y_9[11] - y_9[10])/0.5) * (x-14/3) + y_9[10]
+newjan1_14 = c(newfunc91(1), newfunc92(2), newfunc93(3), newfunc94(4), newfunc95(5))
+
+#for 1-15
+newfunc101 <- function(x) ((y_10[3] - y_10[2])/0.5) * (x-2/3) + y_10[2]
+newfunc102 <- function(x) ((y_10[5] - y_10[4])/0.5) * (x-5/3) + y_10[4]
+newfunc103 <- function(x) ((y_10[7] - y_10[6])/0.75) * (x-29/12) + y_10[6]
+newfunc104 <- function(x) ((y_10[9] - y_10[8])/0.75) * (x-41/12) + y_10[8]
+newfunc105 <- function(x) ((y_10[11] - y_10[10])/0.5) * (x-14/3) + y_10[10]
+newjan1_15 = c(newfunc101(1), newfunc102(2), newfunc103(3), newfunc104(4), newfunc105(5))
+
+combforfive = c(newjan1_2, newjan1_3, newjan1_6, newjan1_7, newjan1_8, newjan1_9, newjan1_10, newjan1_3, newjan1_14, newjan1_15)
+#xi is ith bond
+x1 = c(combforfive[1], combforfive[6], combforfive[11], combforfive[16], combforfive[21], combforfive[26], combforfive[31], combforfive[36], combforfive[41], combforfive[46])
+x2 = c(combforfive[2], combforfive[7], combforfive[12], combforfive[17], combforfive[22], combforfive[27], combforfive[32], combforfive[37], combforfive[42], combforfive[47])
+x3 = c(combforfive[3], combforfive[8], combforfive[13], combforfive[18], combforfive[23], combforfive[28], combforfive[33], combforfive[38], combforfive[43], combforfive[48])
+x4 = c(combforfive[4], combforfive[9], combforfive[14], combforfive[19], combforfive[24], combforfive[29], combforfive[34], combforfive[39], combforfive[44], combforfive[49])
+x5 = c(combforfive[5], combforfive[10], combforfive[15], combforfive[20], combforfive[25], combforfive[30], combforfive[35], combforfive[40], combforfive[45], combforfive[50])
+newx1 = c(log(x1[2]/x1[1]), log(x1[3]/x1[2]), log(x1[4]/x1[3]), log(x1[5]/x1[4]), log(x1[6]/x1[5]), log(x1[7]/x1[6]),log(x1[8]/x1[7]), log(x1[9]/x1[8]), log(x1[10]/x1[9]))
+newx2 = c(log(x2[2]/x2[1]), log(x2[3]/x2[2]), log(x2[4]/x2[3]), log(x2[5]/x2[4]), log(x2[6]/x2[5]), log(x2[7]/x2[6]),log(x2[8]/x2[7]), log(x2[9]/x2[8]), log(x2[10]/x2[9]))
+newx3 = c(log(x3[2]/x3[1]), log(x3[3]/x3[2]), log(x3[4]/x3[3]), log(x3[5]/x3[4]), log(x3[6]/x3[5]), log(x3[7]/x3[6]),log(x3[8]/x3[7]), log(x3[9]/x3[8]), log(x3[10]/x3[9]))
+newx4 = c(log(x4[2]/x4[1]), log(x4[3]/x4[2]), log(x4[4]/x4[3]), log(x4[5]/x4[4]), log(x4[6]/x4[5]), log(x4[7]/x4[6]),log(x4[8]/x4[7]), log(x4[9]/x4[8]), log(x4[10]/x4[9]))
+newx5 = c(log(x5[2]/x5[1]), log(x5[3]/x5[2]), log(x5[4]/x5[3]), log(x5[5]/x5[4]), log(x5[6]/x5[5]), log(x5[7]/x5[6]),log(x5[8]/x5[7]), log(x5[9]/x5[8]), log(x5[10]/x5[9]))
+
+#covmatrix for log return of yield
+fivecomb = c(newx1, newx2, newx3, newx4, newx5)
+logmatrix = matrix(fivecomb, nrow = 9, byrow = FALSE)
+covmatrixlog = cov(logmatrix)
+
+
+#covmatrix for forward rates
+fivecomb2 = c(cy1, cy2, cy3, cy4, cy5, cy6, cy7, cy8, cy9, cy10)
+formatrix = matrix(fivecomb2, nrow = 10, byrow = TRUE)
+covmatrixforward = cov(formatrix)
+
+
+#eigenvalue and vecotr
+evlog = eigen(covmatrixlog)
+evfor = eigen(covmatrixforward)
+six1 = evlog$values
+six2 = evlog$vectors
+six3 = evfor$values
+six4 = evfor$vectors
+```
+
+
